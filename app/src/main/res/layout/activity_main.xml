@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto">
+    <data/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+
+        <LinearLayout
+            android:id="@+id/lay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/shape"
+            android:layout_margin="3dp"
+            android:orientation="vertical">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Instructions  :"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+ <!--   <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No. of Options"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="150dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:textAlignment="center">
+
+    </Spinner>
+    </LinearLayout>
+    -->
+
+</LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:padding="5dp"
+                android:text="@string/one"
+                android:textSize="18dp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:padding="5dp"
+                android:text="@string/two"
+                android:textSize="18dp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:padding="5dp"
+                android:text="@string/three"
+                android:textSize="18dp"
+                android:textStyle="normal"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@string/four"
+                android:textSize="18dp"
+                android:textStyle="normal" />
+<TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:padding="5dp"
+                android:text="@string/seven"
+                android:textSize="18dp"
+                android:textStyle="normal" />
+        </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_below="@+id/comb"
+    android:layout_marginTop="8dp"
+    android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Webview"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                />
+            <Switch
+                android:id="@+id/idSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:onClick="onSwitchClick"
+                android:layout_below="@id/spinner"
+                tools:ignore="NotSibling" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_height="wrap_content"
+          >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accuracy"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                />
+            <Switch
+                android:id="@+id/idSwitch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:onClick="onSwitchClick1"
+                android:layout_below="@id/spinner"
+                tools:ignore="NotSibling" />
+        </LinearLayout>
+</LinearLayout>
+
+        <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:id="@+id/comb"
+    android:layout_below="@+id/lay">
+        <Button
+            android:id="@+id/test"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_above="@+id/spinner"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="35dp"
+            android:visibility="visible"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="START" />
+
+    <TextView
+        android:id="@+id/counting"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="--"
+        android:textColor="@color/button_green"
+        android:layout_marginLeft="15dp"
+        android:textAlignment="center"
+        android:textSize="25dp" />
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="150dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:textAlignment="center">
+
+            </Spinner>
+</LinearLayout>
+
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="SMART_BANNER"
+            android:layout_marginBottom="2dp"
+            ads:adUnitId="@string/banner_ad_unit_id">
+        </com.google.android.gms.ads.AdView>
+
+    <!--    <Button
+            android:id="@+id/tutorial"
+            android:layout_width="300dp"
+            android:layout_height="35dp"
+            android:layout_above="@+id/adView"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_selector"
+            android:gravity="center"
+            android:text="Watch Tutorial"
+            android:textAlignment="center"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="20dp" />-->
+    </RelativeLayout>
+</layout>

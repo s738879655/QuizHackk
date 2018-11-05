@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "898626370409",
+    "firebase_url": "https://quizhackk.firebaseio.com",
+    "project_id": "quizhackk",
+    "storage_bucket": "quizhackk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898626370409:android:85dc6f1a90323ddd",
+        "android_client_info": {
+          "package_name": "com.hostelmanager.quizhackk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "898626370409-t7tdq76a0mi5mdb0um93ourc7dh1t1ro.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hostelmanager.quizhackk",
+            "certificate_hash": "d69d86c1031f9c9744cbe626f533b19b3f35e5b8"
+          }
+        },
+        {
+          "client_id": "898626370409-5if5sg44f0k34p8e71l253facvs726d9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hostelmanager.quizhackk",
+            "certificate_hash": "602fe57a0a6fb51ddcdb88931b29378c72e71720"
+          }
+        },
+        {
+          "client_id": "898626370409-j8784k1765ktuifkvpgk46et298j4qmt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzmxOi18rxcrUVFTI0RnPHxm1Le2-zJpA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "898626370409-j8784k1765ktuifkvpgk46et298j4qmt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
