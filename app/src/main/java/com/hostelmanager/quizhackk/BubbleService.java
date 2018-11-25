@@ -66,6 +66,8 @@ import static com.hostelmanager.quizhackk.MainActivity.option;
 import static com.hostelmanager.quizhackk.MainActivity.isChecked;
 import static com.hostelmanager.quizhackk.MainActivity.isChecked1;
 
+import static com.hostelmanager.quizhackk.MainActivity.checkbox3;
+
 public class BubbleService extends Service {
     private WindowManager mWindowManager;
     private BubbleLayoutBinding mBubbleLayoutBinding;
@@ -83,6 +85,7 @@ public class BubbleService extends Service {
     ViewGroup.LayoutParams webParam1;
     ViewGroup.LayoutParams webParam2;
     ViewGroup.LayoutParams webParam3;
+    ViewGroup.LayoutParams webParam4;
     ViewGroup.LayoutParams webContainerParam;
     ViewGroup.LayoutParams buttonContainerParam;
 
@@ -97,16 +100,19 @@ public class BubbleService extends Service {
     private View layout;
     Button button2;
     Button button1;
+    Button button3;
     TextView textQuest;
     int flag=0;
     WebView webView;
     WebView webView1;
     WebView webView2;
+    WebView webView3;
     List<String> arr;
     String ques="";
+    boolean optionFour=false;
 
     int size,first=230,second=220;
-    boolean forA, forB, forC;
+    boolean forA, forB, forC,forD;
 
     int again=0;
     int bg;
@@ -115,13 +121,16 @@ public class BubbleService extends Service {
     int optionA;
     int optionB;
     int optionC;
+    int optionD;
     String optiona;
     String optionb;
     String optionc;
+    String optiond;
 
     String find1;
     String find2;
     String find3;
+    String find4;
 
     int DURATION=1300;
     Thread t;
@@ -230,6 +239,13 @@ public class BubbleService extends Service {
         webView.setVisibility(View.GONE);
         webView1.setVisibility(View.GONE);
         webView2.setVisibility(View.GONE);
+        webView3.setVisibility(View.GONE);
+
+         if(checkbox3.isChecked())
+             optionFour=true;
+         else
+             optionFour=false;
+
 
         //   initialiseWebview();
         //      webView.loadUrl("about:blank");
@@ -819,11 +835,18 @@ public class BubbleService extends Service {
                     size = arr.size();
 
                     ques = "";
+                    if(!optionFour)
                     for (int i = 0; i < size - 3; i++) {
 
                         ques += arr.get(i);
 
                     }
+                    else
+                        for (int i = 0; i < size - 4; i++) {
+
+                            ques += arr.get(i);
+
+                        }
 
                     if(ques.contains(" not ")||ques.contains(" never ")||ques.contains(" didnt "))
                     {
@@ -846,6 +869,9 @@ public class BubbleService extends Service {
                             webView.loadUrl(finalNewUrl);
                             webView1.loadUrl(finalNewUrl);
                             webView2.loadUrl(finalNewUrl);
+
+                            if(optionFour)
+                                webView3.loadUrl(finalNewUrl);
                             progressBar.setMax(100);
                             progressBar.setProgress(1);
 
@@ -1026,6 +1052,62 @@ public class BubbleService extends Service {
                                 }
                             });
 
+                            if(optionFour)
+                            {
+                                button3.setVisibility(View.VISIBLE);
+                                webView3.setFindListener(new WebView.FindListener() {
+                                    @Override
+                                    public void onFindResultReceived(int i, int i1, boolean b) {
+                                        if (running == true) {
+                                            Log.d("msg2", i1 + "");
+                                            if (i1 > optionD) {
+                                                webView.findNext(true);
+                                                webView1.findNext(true);
+                                                webView2.findNext(true);
+                                                webView3.findNext(true);
+                                                optionD = i1;
+                                            }
+
+                                            Log.d("msg", "cjj");
+
+                                            showAnswer();
+                                        }
+                                    }
+                                });
+                                //forC = b;
+
+
+                                //       webView2.getSettings().setJavaScriptEnabled(true);
+                                webView3.setWebViewClient(new WebViewClient() {
+
+
+                                    @Override
+                                    public void onPageFinished(WebView view, String url) {
+                                        Log.i("onPageFinished", url);
+                                        forD = true;
+                                        //    running = true;
+                                        findInWeb4();
+                                        webView3.setVisibility(View.VISIBLE);
+                                        super.onPageFinished(view, url);
+                                    }
+
+                                    @Override
+                                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                        //  Log.i("shouldOverrideUrlLoading", url.toString());
+                                        return super.shouldOverrideUrlLoading(view, url);
+                                    }
+
+                                    @Override
+                                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                                        if(isChecked1)
+                                            showWeb4();
+                                        else
+                                            showWebType4();
+                                        super.onPageStarted(view, url, favicon);
+                                    }
+                                });
+                            }
+
 
                         } // This is your code
                     };
@@ -1045,14 +1127,16 @@ public class BubbleService extends Service {
 
             Log.d("dfss", optionA + "");
             Log.d("dfssb", optionB + "");
-            Log.d("dfssa", optionC + "");
+            Log.d("dfssa", optionc + "");
 
 
             button.setText(optionA + "  " + optiona);
             button1.setText(optionB + "  " + optionb);
             button2.setText(optionC + "  " + optionc);
+            if(optionFour)
+                button3.setText(optionD + "  " + optiond);
 
-if(flag!=1) {
+if(flag!=1&&!optionFour) {
     if (optionA > optionB && optionA > optionC) {
         button.setBackgroundColor(green);
         button1.setBackgroundColor(pink);
@@ -1092,7 +1176,7 @@ if(flag!=1) {
     }
 
 }
-else
+else if(flag==1&&!optionFour)
 {
     if (optionA < optionB && optionA < optionC) {
         button.setBackgroundColor(green);
@@ -1135,6 +1219,128 @@ else
 
     }
 }
+else if(flag!=1&&optionFour)
+{
+    if (optionA > optionB && optionA > optionC&&optionA>optionD) {
+        button.setBackgroundColor(green);
+        button1.setBackgroundColor(pink);
+        button2.setBackgroundColor(pink);
+        button3.setBackgroundColor(pink);
+
+        // showAll();
+        if (isChecked)
+            showWebView1();
+        else
+            showNothing();
+
+    } else if (optionB > optionA && optionB > optionC&&optionB>optionD) {
+
+        Log.d("msg", "ch");
+
+        button1.setBackgroundColor(green);
+        button.setBackgroundColor(pink);
+        button2.setBackgroundColor(pink);
+        button3.setBackgroundColor(pink);
+        //showAll();
+        if (isChecked)
+            showWebView2();
+        else
+            showNothing();
+    } else if (optionC > optionA && optionC > optionB&&optionC>optionD) {
+
+        button2.setBackgroundColor(green);
+        button.setBackgroundColor(pink);
+        button1.setBackgroundColor(pink);
+        button3.setBackgroundColor(pink);
+
+        // showAll();
+        if (isChecked)
+            showWebView3();
+        else
+            showNothing();
+
+        Log.d("msg", "che");
+
+    }
+    else if (optionD > optionA && optionD > optionB && optionD>optionC) {
+
+        button3.setBackgroundColor(green);
+        button.setBackgroundColor(pink);
+        button1.setBackgroundColor(pink);
+        button2.setBackgroundColor(pink);
+
+        // showAll();
+        if (isChecked)
+            showWebView4();
+        else
+            showNothing();
+
+        Log.d("msg", "che");
+
+    }
+
+}
+else
+{
+    if (optionA < optionB && optionA < optionC&&optionA<optionD) {
+        button.setBackgroundColor(green);
+        button1.setBackgroundColor(pink);
+        button2.setBackgroundColor(pink);
+        button3.setBackgroundColor(pink);
+
+        // showAll();
+        if (isChecked)
+            showWebView1();
+        else
+            showNothing();
+
+    } else if (optionB < optionA && optionB < optionC&&optionB<optionD) {
+
+        Log.d("msg", "ch");
+
+        button1.setBackgroundColor(green);
+        button.setBackgroundColor(pink);
+        button2.setBackgroundColor(pink);
+        button3.setBackgroundColor(pink);
+        //showAll();
+        if (isChecked)
+            showWebView2();
+        else
+            showNothing();
+    } else if (optionC < optionA && optionC < optionB&&optionC<optionD) {
+
+        button2.setBackgroundColor(green);
+        button.setBackgroundColor(pink);
+        button1.setBackgroundColor(pink);
+        button3.setBackgroundColor(pink);
+
+        // showAll();
+        if (isChecked)
+            showWebView3();
+        else
+            showNothing();
+
+        Log.d("msg", "che");
+
+    }
+    else if (optionD < optionA && optionD < optionB && optionD<optionC) {
+
+        button3.setBackgroundColor(green);
+        button.setBackgroundColor(pink);
+        button1.setBackgroundColor(pink);
+        button2.setBackgroundColor(pink);
+
+        // showAll();
+        if (isChecked)
+            showWebView4();
+        else
+            showNothing();
+
+        Log.d("msg", "che");
+
+    }
+
+}
 
 
         }
@@ -1144,6 +1350,10 @@ else
     @Override
     public void onCreate() {
 
+        if(checkbox3.isChecked())
+            optionFour=true;
+        else
+            optionFour=false;
 
         green = Color.parseColor("#009e17");
         bg = Color.parseColor("#009e17");
@@ -1152,10 +1362,12 @@ else
         webView = (WebView) layout.findViewById(R.id.webView);
         webView1 = (WebView) layout.findViewById(R.id.webView1);
         webView2 = (WebView) layout.findViewById(R.id.webView2);
+        webView3 = (WebView) layout.findViewById(R.id.webView3);
 
         button = layout.findViewById(R.id.button);
         button1 = layout.findViewById(R.id.button1);
         button2 = layout.findViewById(R.id.button2);
+        button3 = layout.findViewById(R.id.button3);
         textQuest=layout.findViewById(R.id.textQuest);
         progressBar = layout.findViewById(R.id.progressBar);
 
@@ -1167,27 +1379,33 @@ else
         webView1.getSettings().setJavaScriptEnabled(true);
 
         webView2.getSettings().setJavaScriptEnabled(true);
+        webView3.getSettings().setJavaScriptEnabled(true);
 
 
         webView.getSettings().setDomStorageEnabled(true);
         webView1.getSettings().setDomStorageEnabled(true);
         webView2.getSettings().setDomStorageEnabled(true);
+        webView3.getSettings().setDomStorageEnabled(true);
 
         webView.getSettings().setBlockNetworkImage(true);
         webView1.getSettings().setBlockNetworkImage(true);
         webView2.getSettings().setBlockNetworkImage(true);
+        webView3.getSettings().setBlockNetworkImage(true);
 
          webView.getSettings().setLoadWithOverviewMode(true);
          webView1.getSettings().setLoadWithOverviewMode(true);
          webView2.getSettings().setLoadWithOverviewMode(true);
+         webView3.getSettings().setLoadWithOverviewMode(true);
 
             webView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
             webView1.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
             webView2.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+            webView3.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
 
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView1.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView2.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView3.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         parentContainer=layout.findViewById(R.id.parentContainer);
         webContainer=layout.findViewById(R.id.webContainer);
@@ -1200,33 +1418,40 @@ else
        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
        webView1.setLayerType(View.LAYER_TYPE_HARDWARE, null);
        webView2.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+       webView3.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
 
 
        webView.setInitialScale(120);
        webView1.setInitialScale(120);
        webView2.setInitialScale(120);
+       webView3.setInitialScale(120);
 
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
         webView1.getSettings().setBuiltInZoomControls(true);
         webView1.getSettings().setDisplayZoomControls(false);
         webView2.getSettings().setBuiltInZoomControls(true);
+        webView3.getSettings().setBuiltInZoomControls(true);
         webView2.getSettings().setDisplayZoomControls(false);
+        webView3.getSettings().setDisplayZoomControls(false);
 
        webView.getSettings().setUseWideViewPort(true);
         webView1.getSettings().setUseWideViewPort(true);
          webView2.getSettings().setUseWideViewPort(true);
+         webView3.getSettings().setUseWideViewPort(true);
 
 
         String newUA= "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0";
         webView.getSettings().setUserAgentString(newUA);
         webView1.getSettings().setUserAgentString(newUA);
         webView2.getSettings().setUserAgentString(newUA);
+        webView3.getSettings().setUserAgentString(newUA);
 
         webParam1 = webView.getLayoutParams();
         webParam2 = webView1.getLayoutParams();
         webParam3 = webView2.getLayoutParams();
+        webParam4 = webView3.getLayoutParams();
 
         webContainerParam=webContainer.getLayoutParams();
         buttonContainerParam=buttonContainer.getLayoutParams();
@@ -1305,6 +1530,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         button1.setOnClickListener(view -> BubbleService.this.showWebView2());
 
         button2.setOnClickListener(view -> BubbleService.this.showWebView3());
+        button3.setOnClickListener(view -> BubbleService.this.showWebView4());
       layout.findViewById(R.id.parentContainer).setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
             private int initialY;
@@ -1379,22 +1605,38 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         optionA = 0;
         optionB = 0;
         optionC = 0;
+        optionD = 0;
         optiona = "Not Found";
         optionb = "Not Found";
         optionc = "Not Found";
+        optiond = "Not Found";
         forA = false;
         forB = false;
         forC = false;
+        forD = false;
 
         flag=0;
 
         find1="Not Found";
         find2="Not Found";
         find3="Not Found";
+        find4="Not Found";
 
         button.setText("OPTION A");
         button1.setText("OPTION B");
         button2.setText("OPTION C");
+
+        if(optionFour) {
+            button3.setVisibility(View.VISIBLE);
+            button3.setText("OPTION D");
+            button3.setBackgroundColor(pink);
+        }
+        else
+        {
+            button3.setVisibility(View.GONE);
+
+        }
+
 
 
 
@@ -1411,18 +1653,22 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         webView.clearCache(true);
         webView1.clearCache(true);
         webView2.clearCache(true);
+        webView3.clearCache(true);
 
         webView.clearMatches();
         webView2.clearMatches();
         webView1.clearMatches();
+        webView3.clearMatches();
 
         webView.stopLoading();
         webView1.stopLoading();
         webView2.stopLoading();
+        webView3.stopLoading();
 
         webView1.clearHistory();
         webView.clearHistory();
         webView2.clearHistory();
+        webView3.clearHistory();
 
 
 
@@ -1473,18 +1719,32 @@ private void showWebView2()
     webView2.setLayoutParams(webParam3);
 }
 private void showWebView3()
-{
-    webParam1.height = 1;
-    webParam1.width = 1;
-    webView.setLayoutParams(webParam1);
-    webParam3.height = ViewGroup.LayoutParams.MATCH_PARENT;
-    webParam3.width = ViewGroup.LayoutParams.MATCH_PARENT;
-    webView2.setLayoutParams(webParam3);
-    webParam2.height = 1;
-    webParam2.width = 1;
-    webView1.setLayoutParams(webParam2);
-}
-
+    {
+        webParam1.height = 1;
+        webParam1.width = 1;
+        webView.setLayoutParams(webParam1);
+        webParam3.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        webParam3.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        webView2.setLayoutParams(webParam3);
+        webParam2.height = 1;
+        webParam2.width = 1;
+        webView1.setLayoutParams(webParam2);
+    }
+    private void showWebView4()
+    {
+        webParam1.height = 1;
+        webParam1.width = 1;
+        webView.setLayoutParams(webParam1);
+        webParam4.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        webParam4.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        webView3.setLayoutParams(webParam4);
+        webParam2.height = 1;
+        webParam3.height = 1;
+        webParam2.width = 1;
+        webParam3.width = 1;
+        webView1.setLayoutParams(webParam2);
+        webView2.setLayoutParams(webParam3);
+    }
 private void showWeb1()
 {
     if(running==true) {
@@ -1493,9 +1753,10 @@ private void showWeb1()
 
 
         if (size >= 4) {
-
+if(!optionFour)
             arr1 = arr.get(size - 3).split(" ");
-
+else
+    arr1 = arr.get(size - 4).split(" ");
            // String find;
 
             if (arr1.length > 1) {
@@ -1529,7 +1790,10 @@ private void showWeb2() {
 
 
         if (size >= 4) {
+            if(!optionFour)
             arr2 = arr.get(size - 2).split(" ");
+            else
+                arr2 = arr.get(size - 3).split(" ");
 
             String find;
             if (arr2.length > 1) {
@@ -1565,10 +1829,14 @@ private void showWeb3() {
 
         String arr3[];
         if (size >= 4) {
-            arr3 = arr.get(size - 1).split(" ");
+            if(!optionFour)
+                arr3 = arr.get(size - 1).split(" ");
+            else
+                arr3 = arr.get(size - 2).split(" ");
 
 
-
+System.out.print( arr.get(size - 2));
+Log.d("qw", arr.get(size - 2));
             if (arr3.length > 1) {
 
                 second2 = arr3[1];
@@ -1596,6 +1864,44 @@ private void showWeb3() {
         }
     }
 }
+    private void showWeb4() {
+        if (running == true) {
+
+            String arr4[];
+            if (size >= 4) {
+
+                    arr4 = arr.get(size - 1).split(" ");
+
+
+
+                Log.d("qw", arr.get(size - 1));
+                if (arr4.length > 1) {
+
+                    second2 = arr4[1];
+
+                }
+                if (!(arr4[0].equals("The") || arr4[0].equals("A") || arr4[0].equals("An") || arr4[0].contains(".")||arr4[0].contains("In"))) {
+                    arr4[0] = arr4[0].replaceAll("[^a-zA-Z0-9_.'-]", "");
+                    find4 = arr4[0];
+
+
+
+                    //webView2.findAllAsync(find3);
+
+                    optiond = arr4[0];
+
+                } else {
+                    arr4[arr4.length - 1] = arr4[arr4.length - 1].replaceAll("[^a-zA-Z0-9_.'-]", "");
+                    find4=arr4[arr4.length - 1];
+                    //webView2.findAllAsync(find3);
+                    Log.d("dfdfdf", arr4[arr4.length - 1]);
+                    optiond = arr4[arr4.length - 1];
+                }
+
+
+            }
+        }
+    }
 
     private void showWebType1() {
         if (running == true) {
@@ -1604,7 +1910,13 @@ private void showWeb3() {
 
             if (size >= 4) {
 
-                 find1  = arr.get(size - 3).trim();
+
+
+                if(!optionFour)
+                    find1  = arr.get(size - 3).trim();
+                else
+                    find1  = arr.get(size - 4).trim();
+
                  optiona=find1;
 
             }
@@ -1618,7 +1930,13 @@ private void showWeb3() {
 
             if (size >= 4) {
 
-                find2  = arr.get(size - 2).trim();
+
+
+
+                if(!optionFour)
+                    find2  = arr.get(size - 2).trim();
+                else
+                    find2  = arr.get(size - 3).trim();
                 optionb=find2;
             }
 
@@ -1632,8 +1950,28 @@ private void showWeb3() {
 
             if (size >= 4) {
 
-                find3  = arr.get(size - 1).trim();
+
+
+
+                if(!optionFour)
+                    find3  = arr.get(size - 1).trim();
+                else
+                    find3  = arr.get(size - 2).trim();
                 optionc=find3;
+            }
+
+        }
+    }
+    private void showWebType4() {
+        if (running == true) {
+
+
+
+            if (size >= 4) {
+
+
+                    find4  = arr.get(size - 1).trim();
+                optiond=find4;
             }
 
         }
@@ -1691,7 +2029,12 @@ public void showNothing()
 
     webParam3.height = 1;
     webParam3.width = ViewGroup.LayoutParams.MATCH_PARENT;
-    webView2.setLayoutParams(webParam3);}
+    webView2.setLayoutParams(webParam3);
+
+    webParam4.height = 1;
+    webParam4.width = ViewGroup.LayoutParams.MATCH_PARENT;
+    webView3.setLayoutParams(webParam4);
+}
 
 
     public void showQuest(String ques)
@@ -1712,6 +2055,10 @@ public void showNothing()
     public void findInWeb3()
     {
         webView2.findAllAsync(find3);
+    }
+    public void findInWeb4()
+    {
+        webView3.findAllAsync(find4);
     }
 
     public String modifyString(String str)

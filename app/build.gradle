@@ -73,6 +73,11 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.ads.mediation:chartboost:7.2.0.1'
 
+    //for in app billing
+
+
+    implementation 'com.android.billingclient:billing:1.2'
+
 
 }
 

@@ -13,22 +13,36 @@
             android:id="@+id/lay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="3dp"
             android:background="@drawable/shape"
-            android:layout_margin="3dp"
             android:orientation="vertical">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:text="Instructions  :"
-                android:textSize="25dp"
-                android:textStyle="bold" />
- <!--   <LinearLayout
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="3dp"
+                    android:text="Instructions  :"
+                    android:textSize="25dp"
+                    android:textStyle="bold" />
+<ImageView
+    android:layout_width="30dp"
+    android:layout_height="30dp"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/newimage"/>
+                <CheckBox
+                    android:id="@+id/checkBox3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="4 OPTIONS" />
+                <!--   <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -53,13 +67,14 @@
     </LinearLayout>
     -->
 
-</LinearLayout>
+            </LinearLayout>
+
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:padding="5dp"
+                android:padding="3dp"
                 android:text="@string/one"
                 android:textSize="18dp"
                 android:textStyle="normal" />
@@ -68,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:padding="5dp"
+                android:padding="3dp"
                 android:text="@string/two"
                 android:textSize="18dp"
                 android:textStyle="normal" />
@@ -77,26 +92,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:padding="5dp"
+                android:padding="3dp"
                 android:text="@string/three"
                 android:textSize="18dp"
-                android:textStyle="normal"/>
+                android:textStyle="normal" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:padding="3dp"
                 android:text="@string/four"
                 android:textSize="18dp"
                 android:textStyle="normal" />
-<TextView
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:padding="5dp"
+                android:padding="3dp"
                 android:text="@string/seven"
                 android:textSize="18dp"
                 android:textStyle="normal" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:padding="3dp"
+                android:text="@string/Eight"
+                android:textSize="12dp"
+                android:textStyle="bold" />
         </LinearLayout>
 <LinearLayout
     android:layout_width="match_parent"
@@ -198,7 +222,7 @@
             android:layout_alignParentBottom="true"
             ads:adSize="SMART_BANNER"
             android:layout_marginBottom="2dp"
-            ads:adUnitId="@string/banner_ad_unit_id">
+            ads:adUnitId="@string/test_ad_unit_id">
         </com.google.android.gms.ads.AdView>
 
     <!--    <Button

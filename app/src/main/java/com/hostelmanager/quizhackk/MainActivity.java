@@ -1,6 +1,7 @@
 package com.hostelmanager.quizhackk;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -20,6 +21,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -32,12 +34,20 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsParams;
+import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.chartboost.sdk.Chartboost;
 import com.google.ads.mediation.chartboost.ChartboostAdapter;
 import com.google.android.ads.mediationtestsuite.MediationTestSuite;
@@ -52,17 +62,26 @@ import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+
 import com.hostelmanager.quizhackk.databinding.ActivityMainBinding;
 import com.jirbo.adcolony.AdColonyAdapter;
 import com.jirbo.adcolony.AdColonyBundleBuilder;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, RewardedVideoAdListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, RewardedVideoAdListener,PurchasesUpdatedListener{
     public static MediaProjection sMediaProjection;
+
+   //For in app billing
+    private BillingClient mBillingClient;
+private String mPremiumUpgradePrice;
+public static  boolean optionFour=true;
+
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 5566;
     private static final int REQUEST_CODE = 55566;
     private ActivityMainBinding binding;
@@ -86,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private AdRequest request;
 
     Switch switchBtn;
+    Activity activity;
+
+    public static CheckBox checkbox3;
     Switch switchBtn1;
 
     private static final int REQUEST_CODE_PERMISSION = 2;
@@ -142,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //  test id  ca-app-pub-3940256099942544~3347511713
         // main id   "ca-app-pub-3184687614190176~1319231353"
         MobileAds.initialize(this,
-                "ca-app-pub-3184687614190176~1319231353");
+                "ca-app-pub-3940256099942544~3347511713");
         mAdView =findViewById(R.id.adView);
         btn = findViewById(R.id.test);
 
@@ -153,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         switchBtn1=findViewById(R.id.idSwitch1);
 
         counting.setVisibility(View.VISIBLE);
+
+        checkbox3=findViewById(R.id.checkBox3);
 
      //   AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(request);
@@ -172,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // test id   ca-app-pub-3940256099942544/1033173712
 
         //main "ca-app-pub-3184687614190176/3725902849"
-        mInterstitialAd.setAdUnitId("ca-app-pub-3184687614190176/3725902849");
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
 
         mInterstitialAd.loadAd(request);
 
@@ -551,14 +575,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onRewardedVideoAdClosed() {
-if(sMediaProjection==null)
-    startMediaProjection();
+
+        Toast.makeText(this,"You Have to watch complete (ad) .",Toast.LENGTH_LONG).show();
         loadRewardedVideoAd();
+        binding.test.setEnabled(false);
     }
 
 
     @Override
     public void onRewarded(RewardItem rewardItem) {
+       if(sMediaProjection==null)
         startMediaProjection();
     }
     @Override
@@ -574,7 +600,6 @@ if(sMediaProjection==null)
 
     @Override
     public void onRewardedVideoCompleted() {
-            startMediaProjection();
             loadRewardedVideoAd();
     }
 
@@ -620,6 +645,50 @@ if(sMediaProjection==null)
                     //TODO smth
                 }
                 return true;
+       /*     case R.id.buy:
+
+
+
+                mBillingClient = BillingClient.newBuilder(activity).setListener(this).build();
+                mBillingClient.startConnection(new BillingClientStateListener() {
+                    @Override
+                    public void onBillingSetupFinished(@BillingClient.BillingResponse int billingResponseCode) {
+                        if (billingResponseCode == BillingClient.BillingResponse.OK) {
+                            // The billing client is ready. You can query purchases here.
+
+                            List skuList = new ArrayList<>();
+                            skuList.add("premium_upgrade");
+
+                            SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
+                            params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
+                            mBillingClient.querySkuDetailsAsync(params.build(),
+                                    new SkuDetailsResponseListener() {
+                                        @Override
+                                        public void onSkuDetailsResponse(int responseCode, List skuDetailsList) {
+                                            // Process the result.
+
+                                            if (responseCode == BillingClient.BillingResponse.OK
+                                                    && skuDetailsList != null) {
+                                                for (SkuDetails skuD :skuDetailsList) {
+                                                    String sku = skuD.getSku();
+                                                    String price = skuD.getPrice();
+                                                    if ("premium_upgrade".equals(sku)) {
+                                                        mPremiumUpgradePrice = price;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                    @Override
+                    public void onBillingServiceDisconnected() {
+                        // Try to restart the connection on the next request to
+                        // Google Play by calling the startConnection() method.
+                    }
+                });
+
+                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -658,7 +727,7 @@ if(sMediaProjection==null)
 
 
     private void loadRewardedVideoAd() {
-        mRewardedVideoAd.loadAd("ca-app-pub-3184687614190176/3302111451",
+        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
                 request);
     }
 
@@ -737,5 +806,13 @@ if(sMediaProjection==null)
         } else {
             mInterstitialAd.show();
         }
+    }
+
+
+
+
+    @Override
+    public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
+
     }
 }
