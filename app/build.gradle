@@ -76,7 +76,7 @@ dependencies {
     //for in app billing
 
 
-    implementation 'com.android.billingclient:billing:1.2'
+    
 
 
 }
