@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "898626370409-hfemh9be82j2hgjfub7nab5rhmgu15as.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hostelmanager.quizhackk",
+            "certificate_hash": "c973d0a8c5c0fcbb0c7890d7ed838213137b5e02"
+          }
+        },
+        {
           "client_id": "898626370409-j8784k1765ktuifkvpgk46et298j4qmt.apps.googleusercontent.com",
           "client_type": 3
         }

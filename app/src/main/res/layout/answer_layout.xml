@@ -27,10 +27,19 @@
                 android:src="@drawable/cross" />
 
             <ImageView
+                android:id="@+id/hand"
+                android:layout_marginTop="40dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/hand" />
+
+            <ImageView
                 android:id="@+id/plus"
                 android:layout_marginTop="40dp"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:visibility="invisible"
                 android:scaleType="centerCrop"
                 android:src="@drawable/plus" />
 
@@ -38,6 +47,7 @@
                 android:id="@+id/minus"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:visibility="invisible"
                 android:layout_marginTop="40dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/minus" />
@@ -52,7 +62,7 @@ android:id="@+id/buttonContainer"
     android:id="@+id/textQuest"
     android:background="#000000"
     android:textStyle="bold"
-    android:text="Question"
+    android:text="SEARCH ENGINE"
     android:backgroundTint="@color/colorPrimary"
     android:textColor="@color/white"
     android:layout_width="match_parent"
@@ -120,7 +130,7 @@ android:id="@+id/buttonContainer"
         <ProgressBar
             android:layout_marginTop="-5dp"
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
+            style="@style/MyProgressBarTwo"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:layout_alignParentTop="true"
@@ -171,8 +181,8 @@ android:id="@+id/buttonContainer"
 
 
 </LinearLayout>
-
 </LinearLayout>
+
 
 
 

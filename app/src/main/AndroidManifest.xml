@@ -50,6 +50,7 @@
             android:hardwareAccelerated="true"/>
 
 
+
         <service
             android:name=".BubbleService"
             android:screenOrientation="portrait"

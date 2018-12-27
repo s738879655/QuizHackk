@@ -68,6 +68,7 @@ import static com.hostelmanager.quizhackk.MainActivity.isChecked1;
 
 import static com.hostelmanager.quizhackk.MainActivity.checkbox3;
 
+
 public class BubbleService extends Service {
     private WindowManager mWindowManager;
     private BubbleLayoutBinding mBubbleLayoutBinding;
@@ -82,6 +83,7 @@ public class BubbleService extends Service {
     private VirtualDisplay virtualDisplay;
     int screenWidth, screenHeight, diff;
     ProgressBar progressBar;
+    ProgressBar progressBarClone;
     ViewGroup.LayoutParams webParam1;
     ViewGroup.LayoutParams webParam2;
     ViewGroup.LayoutParams webParam3;
@@ -96,23 +98,37 @@ public class BubbleService extends Service {
     float clipBox1[]=new float[4];
     int clipRegion2[]=new int[4];
 
-    Button button;
+
     private View layout;
+    private View layout1;
+    Button button;
+    String newUrl = "";
     Button button2;
     Button button1;
     Button button3;
+    Button buttonClone;
+    Button button2Clone;
+    Button button1Clone;
+    Button button3Clone;
     TextView textQuest;
+    TextView textQuestClone;
     int flag=0;
     WebView webView;
     WebView webView1;
     WebView webView2;
     WebView webView3;
+
+    WebView webViewClone;
+    WebView webView1Clone;
+    WebView webView2Clone;
+    WebView webView3Clone;
     List<String> arr;
     String ques="";
     boolean optionFour=false;
 
     int size,first=230,second=220;
     boolean forA, forB, forC,forD;
+    boolean forAClone, forBClone, forCClone,forDClone;
 
     int again=0;
     int bg;
@@ -132,8 +148,15 @@ public class BubbleService extends Service {
     String find3;
     String find4;
 
+    int optionAClone;
+    int optionBClone;
+    int optionCClone;
+    int optionDClone;
+
+
+
     int DURATION=1300;
-    Thread t;
+    Thread t,t1;
     TextView msg;
     Context context;
     private  boolean running=false;
@@ -147,6 +170,10 @@ public class BubbleService extends Service {
     private ImageView cross;
     private ImageView plus;
     private ImageView minus;
+
+    private ImageView crossClone;
+    private ImageView plusClone;
+    private ImageView minusClone;
     private View mFloatingView;
  //   private static final String DATA_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Quiz Assist/";
 
@@ -241,6 +268,8 @@ public class BubbleService extends Service {
         webView2.setVisibility(View.GONE);
         webView3.setVisibility(View.GONE);
 
+
+
          if(checkbox3.isChecked())
              optionFour=true;
          else
@@ -268,8 +297,9 @@ public class BubbleService extends Service {
         WindowManager.LayoutParams mClipLayoutParams = buildLayoutParamsForClip();
         ((ClipView) mClipLayoutBinding.getRoot()).updateRegion(clipBox[0], clipBox[1], clipBox[2], clipBox[3]);
 
-        if(!(layout.getVisibility()== View.GONE))
+        if(!(layout.getVisibility()== View.GONE&&layout1.getVisibility()== View.GONE))
             layout.setVisibility(View.GONE);
+            layout1.setVisibility(View.GONE);
         // getWindowManager().removeView(layout);
         if(!isClipMode)
             getWindowManager().addView(mClipLayoutBinding.getRoot(), mClipLayoutParams);
@@ -400,6 +430,8 @@ public class BubbleService extends Service {
             }
             if (layout != null) {
                 mWindowManager.removeView(layout);
+            } if (layout1 != null) {
+                mWindowManager.removeView(layout1);
             }
             if (mClipLayoutBinding != null) {
                 if (isClipMode) {
@@ -536,6 +568,7 @@ public class BubbleService extends Service {
                                 if (image != null)
                                 {
                                     layout.setVisibility(View.VISIBLE);
+                                    layout1.setVisibility(View.VISIBLE);
                                     running=true;
                                     emitter.onSuccess(image);
                                 }
@@ -789,6 +822,75 @@ public class BubbleService extends Service {
     {
         Log.d("deqwert", "Enetred findAns");
         //  button.setText("hello");
+
+        switch (engine) {
+            case "Google":
+                newUrl = "https://www.google.co.in/search?q=";
+                break;
+            case "Bing":
+                newUrl = "https://www.bing.com/search?q=";
+                break;
+            case "DuckDuckGo":
+                newUrl = "https://duckduckgo.com/?q=";
+                break;
+            case "Ask.com":
+                newUrl = "https://www.ask.com/web?q=";
+                break;
+
+            case "Aol.":
+                newUrl = "https://search.aol.com/aol/search;?q=";
+                break;
+            case "Excite.com":
+                newUrl = "http://msxml.excite.com/search/web?q=";
+                break;
+            case "Web Crawler":
+                newUrl = "http://www.webcrawler.com/serp?q=";
+                break;
+
+            default:
+                newUrl = "https://www.google.co.in/search?q=";
+                break;
+        }
+
+
+
+        String url = "";
+
+        url = urlComing;
+
+        assert url != null;
+        arr = Arrays.asList(url.split("\n"));
+
+
+
+        //    newUrl = "https://www.wolframalpha.com/input/?i=";
+        size = arr.size();
+
+        ques = "";
+        if(!optionFour)
+            for (int i = 0; i < size - 3; i++) {
+
+                ques += arr.get(i);
+
+            }
+        else
+            for (int i = 0; i < size - 4; i++) {
+
+                ques += arr.get(i);
+
+            }
+
+        if(ques.contains(" not ")||ques.contains(" never ")||ques.contains(" didnt ")||ques.contains(" NOT "))
+        {
+            flag=1;
+        }
+        Log.d("que", newUrl);
+
+        ques = ques.replaceAll("[^a-zA-Z0-9.'?\" \"-]", "");
+        String newq=modifyString(ques);
+        String finalNewUrl = newUrl + newq ;
+
+
         if(running==true) {
             t = new Thread(new Runnable() {
                 @Override
@@ -798,65 +900,7 @@ public class BubbleService extends Service {
                     Log.d("deqwer", urlComing);
 
 
-                    String url = "";
 
-                    url = urlComing;
-
-                    assert url != null;
-                    arr = Arrays.asList(url.split("\n"));
-
-                    String newUrl = "";
-                    switch (engine) {
-                        case "Google":
-                            newUrl = "https://www.google.co.in/search?q=";
-                            break;
-                        case "Bing":
-                            newUrl = "https://www.bing.com/search?q=";
-                            break;
-                        case "DuckDuckGo":
-                            newUrl = "https://duckduckgo.com/?q=";
-                            break;
-                        case "Ask.com":
-                            newUrl = "https://www.ask.com/web?q=";
-                            break;
-
-                        case "Aol.":
-                            newUrl = "https://search.aol.com/aol/search;?q=";
-                            break;
-                        case "Excite.com":
-                            newUrl = "http://msxml.excite.com/search/web?q=";
-                            break;
-                        default:
-                            newUrl = "https://www.google.co.in/search?q=";
-                            break;
-                    }
-
-                    //    newUrl = "https://www.wolframalpha.com/input/?i=";
-                    size = arr.size();
-
-                    ques = "";
-                    if(!optionFour)
-                    for (int i = 0; i < size - 3; i++) {
-
-                        ques += arr.get(i);
-
-                    }
-                    else
-                        for (int i = 0; i < size - 4; i++) {
-
-                            ques += arr.get(i);
-
-                        }
-
-                    if(ques.contains(" not ")||ques.contains(" never ")||ques.contains(" didnt "))
-                    {
-                        flag=1;
-                    }
-                    Log.d("que", newUrl);
-
-                    ques = ques.replaceAll("[^a-zA-Z0-9.'?\" \"-]", "");
-                   String newq=modifyString(ques);
-                    String finalNewUrl = newUrl + newq ;
 
 
                     Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -870,25 +914,31 @@ public class BubbleService extends Service {
                             webView1.loadUrl(finalNewUrl);
                             webView2.loadUrl(finalNewUrl);
 
-                            if(optionFour)
+
+                            if(optionFour) {
                                 webView3.loadUrl(finalNewUrl);
+
+                            }
                             progressBar.setMax(100);
+
                             progressBar.setProgress(1);
 
 
+
                             webView.setWebChromeClient(new WebChromeClient() {
-                                public void onProgressChanged(WebView view, int progress) {
-                                    progressBar.setProgress(progress);
-                                    if (progress == 100) {
-                                        progressBar.setVisibility(View.GONE);
+                                        public void onProgressChanged(WebView view, int progress) {
+                                            progressBar.setProgress(progress);
+                                            if (progress == 100) {
+                                                progressBar.setVisibility(View.GONE);
 
-                                    } else {
+                                            } else {
 
-                                        progressBar.setVisibility(View.VISIBLE);
+                                                progressBar.setVisibility(View.VISIBLE);
 
-                                    }
+                                            }
                                 }
                             });
+
 
 
                             Log.d("qwerr", "Enetrere in webview");
@@ -925,6 +975,8 @@ public class BubbleService extends Service {
                             });
 
 
+
+
                             //    webView1.getSettings().setJavaScriptEnabled(true);
                             webView1.setWebViewClient(new WebViewClient() {
 
@@ -955,6 +1007,7 @@ public class BubbleService extends Service {
                                     super.onPageStarted(view, url, favicon);
                                 }
                             });
+
 
 
                             webView.setFindListener(new WebView.FindListener() {
@@ -1019,6 +1072,7 @@ public class BubbleService extends Service {
                                     }
                                 }
                             });
+
                             //forC = b;
 
 
@@ -1055,6 +1109,7 @@ public class BubbleService extends Service {
                             if(optionFour)
                             {
                                 button3.setVisibility(View.VISIBLE);
+                                button3Clone.setVisibility(View.VISIBLE);
                                 webView3.setFindListener(new WebView.FindListener() {
                                     @Override
                                     public void onFindResultReceived(int i, int i1, boolean b) {
@@ -1074,6 +1129,7 @@ public class BubbleService extends Service {
                                         }
                                     }
                                 });
+
                                 //forC = b;
 
 
@@ -1106,6 +1162,8 @@ public class BubbleService extends Service {
                                         super.onPageStarted(view, url, favicon);
                                     }
                                 });
+
+
                             }
 
 
@@ -1113,17 +1171,442 @@ public class BubbleService extends Service {
                     };
                     mainHandler.post(myRunnable);
 
+
+
+                }
+            });
+            t1=new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Handler mainHandler1 = new Handler(Looper.getMainLooper());
+
+                    Runnable myRunnable1 = new Runnable() {
+                        @Override
+                        public void run() {
+
+                            showQuest(ques);
+
+
+                            webViewClone.loadUrl("https://www.google.co.in/search?q="+newq);
+                            webView1Clone.loadUrl("https://www.google.co.in/search?q="+newq);
+                            webView2Clone.loadUrl("https://www.google.co.in/search?q="+newq);
+
+                            if(optionFour) {
+
+                                webView3Clone.loadUrl("https://www.google.co.in/search?q="+newq);
+                            }
+
+                            progressBarClone.setMax(100);
+
+                            progressBarClone.setProgress(1);
+
+                            webViewClone.setWebChromeClient(new WebChromeClient() {
+                                public void onProgressChanged(WebView view, int progress) {
+                                    progressBarClone.setProgress(progress);
+                                    if (progress == 100) {
+                                        progressBarClone.setVisibility(View.GONE);
+
+                                    } else {
+
+                                        progressBarClone.setVisibility(View.VISIBLE);
+
+                                    }
+                                }
+                            });
+
+
+                            Log.d("qwerr", "Enetrere in webview");
+                            //   webView.getSettings().setJavaScriptEnabled(true);
+
+
+
+                            webViewClone.setWebViewClient(new WebViewClient() {
+                                @Override
+                                public void onPageFinished(WebView view, String url) {
+
+                                    Log.d("jhdhdc", "Entered int the On page Finished");
+                                    forAClone = true;
+
+                                  //  webViewClone.setVisibility(View.VISIBLE);
+                                    //  running = true;
+                                    findInWeb1Clone();
+                                    super.onPageFinished(view, url);
+                                }
+
+                                @Override
+                                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                    //  Log.i("shouldOverrideUrlLoading", url.toString());
+                                    return super.shouldOverrideUrlLoading(view, url);
+                                }
+
+                                @Override
+                                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+                                    super.onPageStarted(view, url, favicon);
+                                }
+                            });
+
+
+                            //    webView1.getSettings().setJavaScriptEnabled(true);
+
+                            webView1Clone.setWebViewClient(new WebViewClient() {
+
+                                @Override
+                                public void onPageFinished(WebView view, String url) {
+                                    Log.i("onPageFinished", url);
+                                    forBClone = true;
+
+                                    //      webView1.setVisibility(View.VISIBLE);
+                                    //    running = true;
+
+                                    findInWeb2Clone();
+                                    super.onPageFinished(view, url);
+                                }
+
+                                @Override
+                                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                    //  Log.i("shouldOverrideUrlLoading", url.toString());
+                                    return super.shouldOverrideUrlLoading(view, url);
+                                }
+
+                                @Override
+                                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+                                    super.onPageStarted(view, url, favicon);
+                                }
+                            });
+
+
+
+                            webViewClone.setFindListener(new WebView.FindListener() {
+                                @Override
+                                public void onFindResultReceived(int i, int i1, boolean b) {
+                                    Log.d("msg0", i1 + "");
+                                    Log.d("qaws", b + "");
+
+                                    //  forA = b;
+                                    if (running == true) {
+
+                                        if (i1 > optionAClone) {
+                                            //  webView.findNext(true);
+                                            // webView1.findNext(true);
+                                            //   webView2.findNext(true);
+                                            optionAClone = i1;
+                                            //   Toast.makeText(context, i1+"", Toast.LENGTH_SHORT).show();
+                                        }
+
+
+                                        Log.d("qwe", "InCounting");
+                                        showAnswerClone();
+                                        Log.d("msg", "cdfds");
+
+                                    }
+                                }
+                            });
+
+
+                            webView1Clone.setFindListener(new WebView.FindListener() {
+                                @Override
+                                public void onFindResultReceived(int i, int i1, boolean b) {
+                                    Log.d("msg1", i1 + "");
+                                    if (running == true) {
+                                        if (i1 > optionBClone) {
+                                            // webView.findNext(true);
+                                            //  webView1.findNext(true);
+                                            //  webView2.findNext(true);
+                                            optionBClone = i1;
+                                        } // forB = b;
+                                        showAnswerClone();
+                                        Log.d("msg", "c");
+                                    }
+
+                                }
+                            });
+
+                            webView2Clone.setFindListener(new WebView.FindListener() {
+                                @Override
+                                public void onFindResultReceived(int i, int i1, boolean b) {
+                                    if (running == true) {
+                                        Log.d("msg2", i1 + "");
+                                        if (i1 > optionCClone) {
+                                            //webView.findNext(true);
+                                            // webView1.findNext(true);
+                                            // webView2.findNext(true);
+                                            optionCClone = i1;
+                                        }
+
+                                        Log.d("msg", "cjj");
+
+                                        showAnswerClone();
+                                    }
+                                }
+                            });
+                            //forC = b;
+
+
+                            //       webView2.getSettings().setJavaScriptEnabled(true);
+
+                            webView2Clone.setWebViewClient(new WebViewClient() {
+
+
+                                @Override
+                                public void onPageFinished(WebView view, String url) {
+                                    Log.i("onPageFinished", url);
+                                    forCClone = true;
+                                    //    running = true;
+                                    findInWeb3Clone();
+                                    //   webView2.setVisibility(View.VISIBLE);
+                                    super.onPageFinished(view, url);
+                                }
+
+                                @Override
+                                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                    //  Log.i("shouldOverrideUrlLoading", url.toString());
+                                    return super.shouldOverrideUrlLoading(view, url);
+                                }
+
+                                @Override
+                                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+                                    super.onPageStarted(view, url, favicon);
+                                }
+                            });
+
+                            if(optionFour)
+                            {
+                                button3.setVisibility(View.VISIBLE);
+                                button3Clone.setVisibility(View.VISIBLE);
+
+                                webView3Clone.setFindListener(new WebView.FindListener() {
+                                    @Override
+                                    public void onFindResultReceived(int i, int i1, boolean b) {
+                                        if (running == true) {
+                                            Log.d("msg2", i1 + "");
+                                            if (i1 > optionDClone) {
+                                                //  webView.findNext(true);
+                                                // webView1.findNext(true);
+                                                // webView2.findNext(true);
+                                                // webView3.findNext(true);
+                                                optionDClone = i1;
+                                            }
+
+                                            Log.d("msg", "cjj");
+
+                                            showAnswerClone();
+                                        }
+                                    }
+                                });
+                                //forC = b;
+
+
+                                //       webView2.getSettings().setJavaScriptEnabled(true);
+
+                            }
+
+
+                        } // This is your code
+                    };
+                    mainHandler1.post(myRunnable1);
                 }
             });
         }
 
         t.start();
+        t1.start();
+
+
     }
 
     @SuppressLint({"ResourceAsColor", "SetTextI18n"})
+
+
+    public void showAnswerClone() {
+
+        if (running == true) {
+
+            Log.d("dfss", optionA + "");
+            Log.d("dfssb", optionB + "");
+            Log.d("dfssa", optionc + "");
+
+            buttonClone.setText(optionAClone + "  " + optiona);
+            button1Clone.setText(optionBClone + "  " + optionb);
+            button2Clone.setText(optionCClone + "  " + optionc);
+            if(optionFour)
+                button3Clone.setText(optionDClone + "  " + optiond);
+
+            if(flag!=1&&!optionFour) {
+                if (optionAClone > optionBClone && optionAClone > optionCClone) {
+                    buttonClone.setBackgroundColor(green);
+                    button1Clone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+                    // showAll();
+
+                } else if (optionBClone > optionAClone && optionBClone > optionCClone) {
+
+                    Log.d("msg", "ch");
+
+                    button1Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+                    //showAll();
+
+                } else if (optionCClone > optionAClone && optionCClone > optionBClone) {
+
+                    button2Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button1Clone.setBackgroundColor(pink);
+
+                    // showAll();
+
+                    Log.d("msg", "che");
+
+                }
+
+            }
+            else if(flag==1&&!optionFour)
+            {
+                if (optionAClone < optionBClone && optionAClone < optionCClone) {
+                    buttonClone.setBackgroundColor(green);
+                    button1Clone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+                    // showAll();
+
+
+                } else if (optionBClone < optionAClone && optionBClone < optionCClone) {
+
+                    Log.d("msg", "ch");
+
+                    button1Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+
+                    //showAll();
+
+                } else if (optionCClone < optionAClone && optionCClone < optionBClone) {
+
+                    button2Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button1Clone.setBackgroundColor(pink);
+
+
+                    // showAll();
+
+                    Log.d("msg", "che");
+
+
+                }
+            }
+            else if(flag!=1&&optionFour)
+            {
+                if (optionAClone > optionBClone && optionAClone > optionCClone&&optionAClone>optionDClone) {
+                    buttonClone.setBackgroundColor(green);
+                    button1Clone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+                    button3Clone.setBackgroundColor(pink);
+
+                    // showAll();
+
+                } else if (optionBClone > optionAClone && optionBClone > optionCClone&&optionBClone>optionDClone) {
+
+                    Log.d("msg", "ch");
+
+                    button1Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+                    button3Clone.setBackgroundColor(pink);
+                    //showAll();
+
+                } else if (optionCClone > optionAClone && optionCClone > optionBClone&&optionCClone>optionDClone) {
+
+                    button2Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button1Clone.setBackgroundColor(pink);
+                    button3Clone.setBackgroundColor(pink);
+
+                    // showAll();
+
+
+                    Log.d("msg", "che");
+
+                }
+                else if (optionDClone > optionAClone && optionDClone > optionBClone && optionDClone>optionCClone) {
+
+                    button3Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button1Clone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+
+                    // showAll();
+
+
+                    Log.d("msg", "che");
+
+                }
+
+            }
+            else
+            {
+                if (optionAClone < optionBClone && optionAClone < optionCClone&&optionAClone<optionDClone) {
+                    buttonClone.setBackgroundColor(green);
+                    button1Clone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+                    button3Clone.setBackgroundColor(pink);
+
+                    // showAll();
+
+                } else if (optionBClone < optionAClone && optionBClone < optionCClone&&optionBClone<optionDClone) {
+
+                    Log.d("msg", "ch");
+
+                    button1Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+                    button3Clone.setBackgroundColor(pink);
+                    //showAll();
+
+                } else if (optionCClone < optionAClone && optionCClone < optionBClone&&optionCClone<optionDClone) {
+
+                    button2Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button1Clone.setBackgroundColor(pink);
+                    button3Clone.setBackgroundColor(pink);
+
+                    // showAll();
+
+
+                    Log.d("msg", "che");
+
+                }
+                else if (optionD < optionA && optionD < optionB && optionD<optionC) {
+
+                    button3Clone.setBackgroundColor(green);
+                    buttonClone.setBackgroundColor(pink);
+                    button1Clone.setBackgroundColor(pink);
+                    button2Clone.setBackgroundColor(pink);
+
+                    // showAll();
+
+                    Log.d("msg", "che");
+
+                }
+
+            }
+
+
+
+
+        }
+    }
     public void showAnswer() {
 
         if (running == true) {
+
+
+
+
+
+
+            //without Clone
 
             Log.d("dfss", optionA + "");
             Log.d("dfssb", optionB + "");
@@ -1359,17 +1842,29 @@ else
         bg = Color.parseColor("#009e17");
         pink = Color.parseColor("#ffffff");
         layout = LayoutInflater.from(this).inflate(R.layout.answer_layout, null);
+        layout1 = LayoutInflater.from(this).inflate(R.layout.answer_layout, null);
         webView = (WebView) layout.findViewById(R.id.webView);
         webView1 = (WebView) layout.findViewById(R.id.webView1);
         webView2 = (WebView) layout.findViewById(R.id.webView2);
         webView3 = (WebView) layout.findViewById(R.id.webView3);
 
+        webViewClone = (WebView) layout1.findViewById(R.id.webView);
+        webView1Clone = (WebView) layout1.findViewById(R.id.webView1);
+        webView2Clone = (WebView) layout1.findViewById(R.id.webView2);
+        webView3Clone = (WebView) layout1.findViewById(R.id.webView3);
+
         button = layout.findViewById(R.id.button);
         button1 = layout.findViewById(R.id.button1);
         button2 = layout.findViewById(R.id.button2);
         button3 = layout.findViewById(R.id.button3);
+        buttonClone = layout1.findViewById(R.id.button);
+        button1Clone = layout1.findViewById(R.id.button1);
+        button2Clone = layout1.findViewById(R.id.button2);
+        button3Clone = layout1.findViewById(R.id.button3);
         textQuest=layout.findViewById(R.id.textQuest);
+        textQuestClone=layout1.findViewById(R.id.textQuest);
         progressBar = layout.findViewById(R.id.progressBar);
+        progressBarClone = layout1.findViewById(R.id.progressBar);
 
 
         context = this;
@@ -1380,6 +1875,13 @@ else
 
         webView2.getSettings().setJavaScriptEnabled(true);
         webView3.getSettings().setJavaScriptEnabled(true);
+
+ webViewClone.getSettings().setJavaScriptEnabled(true);
+
+        webView1Clone.getSettings().setJavaScriptEnabled(true);
+
+        webView2Clone.getSettings().setJavaScriptEnabled(true);
+        webView3Clone.getSettings().setJavaScriptEnabled(true);
 
 
         webView.getSettings().setDomStorageEnabled(true);
@@ -1407,6 +1909,32 @@ else
         webView2.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView3.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 
+
+        webViewClone.getSettings().setDomStorageEnabled(true);
+        webView1Clone.getSettings().setDomStorageEnabled(true);
+        webView2Clone.getSettings().setDomStorageEnabled(true);
+        webView3Clone.getSettings().setDomStorageEnabled(true);
+
+        webViewClone.getSettings().setBlockNetworkImage(true);
+        webView1Clone.getSettings().setBlockNetworkImage(true);
+        webView2Clone.getSettings().setBlockNetworkImage(true);
+        webView3Clone.getSettings().setBlockNetworkImage(true);
+
+         webViewClone.getSettings().setLoadWithOverviewMode(true);
+         webView1Clone.getSettings().setLoadWithOverviewMode(true);
+         webView2Clone.getSettings().setLoadWithOverviewMode(true);
+         webView3Clone.getSettings().setLoadWithOverviewMode(true);
+
+            webViewClone.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+            webView1Clone.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+            webView2Clone.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+            webView3Clone.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+
+        webViewClone.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView1Clone.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView2Clone.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView3Clone.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+
         parentContainer=layout.findViewById(R.id.parentContainer);
         webContainer=layout.findViewById(R.id.webContainer);
         buttonContainer=layout.findViewById(R.id.buttonContainer);
@@ -1415,6 +1943,14 @@ else
         plus=layout.findViewById(R.id.plus);
         minus=layout.findViewById(R.id.minus);
 
+        crossClone=layout1.findViewById(R.id.cross);
+        plusClone=layout1.findViewById(R.id.plus);
+        minusClone=layout1.findViewById(R.id.minus);
+
+        crossClone.setVisibility(View.INVISIBLE);
+        plusClone.setVisibility(View.INVISIBLE);
+        minusClone.setVisibility(View.INVISIBLE);
+
        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
        webView1.setLayerType(View.LAYER_TYPE_HARDWARE, null);
        webView2.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -1422,8 +1958,8 @@ else
 
 
 
-       webView.setInitialScale(120);
-       webView1.setInitialScale(120);
+     //  webView.setInitialScale(120);
+ /*      webView1.setInitialScale(120);
        webView2.setInitialScale(120);
        webView3.setInitialScale(120);
 
@@ -1446,7 +1982,7 @@ else
         webView.getSettings().setUserAgentString(newUA);
         webView1.getSettings().setUserAgentString(newUA);
         webView2.getSettings().setUserAgentString(newUA);
-        webView3.getSettings().setUserAgentString(newUA);
+        webView3.getSettings().setUserAgentString(newUA);*/
 
         webParam1 = webView.getLayoutParams();
         webParam2 = webView1.getLayoutParams();
@@ -1469,12 +2005,22 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
     LAYOUT_FLAG,
     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
     PixelFormat.TRANSLUCENT);
+WindowManager.LayoutParams params1 = new WindowManager.LayoutParams(
+    WindowManager.LayoutParams.WRAP_CONTENT,
+    WindowManager.LayoutParams.WRAP_CONTENT,
+    LAYOUT_FLAG,
+    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+    PixelFormat.TRANSLUCENT);
 
   params.gravity = Gravity.TOP | Gravity.RIGHT;        //Initially view will be added to top-left corner
-        params.x = 0;
+        params.x = 10;
         params.y = 30;
 
     getWindowManager().addView(layout, params);
+        params1.gravity = Gravity.BOTTOM| Gravity.LEFT;        //Initially view will be added to top-left corner
+        params1.x = 0;
+        params1.y = 0;
+    getWindowManager().addView(layout1, params1);
 
 
 
@@ -1483,6 +2029,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             @Override
             public void onClick(View view) {
                 layout.setVisibility(View.GONE);
+                layout1.setVisibility(View.GONE);
             }
         });
 
@@ -1522,6 +2069,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             {
                 Toast.makeText(context, "Minimum limit reached.", Toast.LENGTH_SHORT).show();
             }
+
             }
         });
 
@@ -1530,8 +2078,10 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         button1.setOnClickListener(view -> BubbleService.this.showWebView2());
 
         button2.setOnClickListener(view -> BubbleService.this.showWebView3());
+
         button3.setOnClickListener(view -> BubbleService.this.showWebView4());
-      layout.findViewById(R.id.parentContainer).setOnTouchListener(new View.OnTouchListener() {
+
+        layout.findViewById(R.id.parentContainer).setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
             private int initialY;
             private float initialTouchX;
@@ -1564,6 +2114,48 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         Log.d("zxcvb","move");
                         params.x = initialX - (int) (motionEvent.getRawX() - initialTouchX);
                         params.y = initialY + (int) (motionEvent.getRawY() - initialTouchY);
+                        float distance = motionEvent.getRawX() + initialTouchX
+                                + motionEvent.getRawY() - initialTouchY;
+                        moveDistance += Math.abs(distance);
+                        mWindowManager.updateViewLayout(view, params);
+                        break;
+                }
+                return true;
+            }
+        });
+        layout1.findViewById(R.id.parentContainer).setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+            private float moveDistance;
+
+
+
+            @Override
+
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                WindowManager.LayoutParams params = (WindowManager.LayoutParams) view.getLayoutParams();
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        moveDistance = 0;
+                        initialX = params.x;
+                        initialY = params.y;
+                        initialTouchX = motionEvent.getRawX();
+                        initialTouchY = motionEvent.getRawY();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        view.performClick();
+                        if (Float.compare(moveDistance, 100f) >= 0) {
+
+                        } else {
+
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.d("zxcvb","move");
+                        params.x = initialX + (int) (motionEvent.getRawX() - initialTouchX);
+                        params.y = initialY - (int) (motionEvent.getRawY() - initialTouchY);
                         float distance = motionEvent.getRawX() + initialTouchX
                                 + motionEvent.getRawY() - initialTouchY;
                         moveDistance += Math.abs(distance);
@@ -1606,6 +2198,10 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         optionB = 0;
         optionC = 0;
         optionD = 0;
+        optionAClone = 0;
+        optionBClone = 0;
+        optionCClone = 0;
+        optionDClone = 0;
         optiona = "Not Found";
         optionb = "Not Found";
         optionc = "Not Found";
@@ -1614,6 +2210,10 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         forB = false;
         forC = false;
         forD = false;
+        forAClone = false;
+        forBClone = false;
+        forCClone = false;
+        forDClone = false;
 
         flag=0;
 
@@ -1625,15 +2225,22 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         button.setText("OPTION A");
         button1.setText("OPTION B");
         button2.setText("OPTION C");
+        buttonClone.setText("OPTION A");
+        button1Clone.setText("OPTION B");
+        button2Clone.setText("OPTION C");
 
         if(optionFour) {
             button3.setVisibility(View.VISIBLE);
+            button3Clone.setVisibility(View.VISIBLE);
             button3.setText("OPTION D");
+            button3Clone.setText("OPTION D");
             button3.setBackgroundColor(pink);
+            button3Clone.setBackgroundColor(pink);
         }
         else
         {
             button3.setVisibility(View.GONE);
+            button3Clone.setVisibility(View.GONE);
 
         }
 
@@ -1643,6 +2250,9 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         button2.setBackgroundColor(pink);
         button1.setBackgroundColor(pink);
         button.setBackgroundColor(pink);
+        button2Clone.setBackgroundColor(pink);
+        button1Clone.setBackgroundColor(pink);
+        buttonClone.setBackgroundColor(pink);
     }
 
 
@@ -1669,6 +2279,27 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         webView.clearHistory();
         webView2.clearHistory();
         webView3.clearHistory();
+
+
+        webViewClone.clearCache(true);
+        webView1Clone.clearCache(true);
+        webView2Clone.clearCache(true);
+        webView3Clone.clearCache(true);
+
+        webViewClone.clearMatches();
+        webView2Clone.clearMatches();
+        webView1Clone.clearMatches();
+        webView3Clone.clearMatches();
+
+        webViewClone.stopLoading();
+        webView1Clone.stopLoading();
+        webView2Clone.stopLoading();
+        webView3Clone.stopLoading();
+
+        webView1Clone.clearHistory();
+        webViewClone.clearHistory();
+        webView2Clone.clearHistory();
+        webView3Clone.clearHistory();
 
 
 
@@ -1765,7 +2396,7 @@ else
 
             }
             if (!(arr1[0].equals("The") || arr1[0].equals("A") || arr1[0].equals("An") || arr1[0].contains(".")||arr1[0].contains("In"))) {
-                arr1[0] = arr1[0].replaceAll("[^a-zA-Z0-9_.'-]", "");
+//                arr1[0] = arr1[0].replaceAll("[^a-zA-Z0-9_.'-]", "");
 
                 find1 = arr1[0];
 
@@ -1774,7 +2405,7 @@ else
                 optiona = arr1[0];
 
             } else {
-                arr1[arr1.length - 1] = arr1[arr1.length - 1].replaceAll("[^a-zA-Z0-9_.'-]", "");
+//                arr1[arr1.length - 1] = arr1[arr1.length - 1].replaceAll("[^a-zA-Z0-9_.'-]", "");
                 find1=arr1[arr1.length - 1];
                // webView.findAllAsync(find1);
                 Log.d("dfdfdf", arr1[arr1.length - 1]);
@@ -1803,7 +2434,7 @@ private void showWeb2() {
             }
 
             if (!(arr2[0].equals("The") || arr2[0].equals("A") || arr2[0].equals("An") || arr2[0].contains(".")||arr2[0].contains("In"))) {
-                arr2[0] = arr2[0].replaceAll("[^a-zA-Z0-9_.'-]", "");
+          //      arr2[0] = arr2[0].replaceAll("[^a-zA-Z0-9_.'-]", "");
 
 
                 find2 = arr2[0];
@@ -1814,7 +2445,7 @@ private void showWeb2() {
                 optionb = arr2[0];
 
             } else {
-                arr2[arr2.length - 1] = arr2[arr2.length - 1].replaceAll("[^a-zA-Z0-9_.'-]", "");
+            //    arr2[arr2.length - 1] = arr2[arr2.length - 1].replaceAll("[^a-zA-Z0-9_.'-]", "");
                 find2=arr2[arr2.length - 1];
                 //webView1.findAllAsync(find2);
                 Log.d("dfdfdf", arr2[arr2.length - 1]);
@@ -1843,7 +2474,7 @@ Log.d("qw", arr.get(size - 2));
 
             }
             if (!(arr3[0].equals("The") || arr3[0].equals("A") || arr3[0].equals("An") || arr3[0].contains(".")||arr3[0].contains("In"))) {
-                arr3[0] = arr3[0].replaceAll("[^a-zA-Z0-9_.'-]", "");
+               // arr3[0] = arr3[0].replaceAll("[^a-zA-Z0-9_.'-]", "");
                 find3 = arr3[0];
 
 
@@ -1853,7 +2484,7 @@ Log.d("qw", arr.get(size - 2));
                 optionc = arr3[0];
 
             } else {
-                arr3[arr3.length - 1] = arr3[arr3.length - 1].replaceAll("[^a-zA-Z0-9_.'-]", "");
+              //  arr3[arr3.length - 1] = arr3[arr3.length - 1].replaceAll("[^a-zA-Z0-9_.'-]", "");
                 find3=arr3[arr3.length - 1];
                 //webView2.findAllAsync(find3);
                 Log.d("dfdfdf", arr3[arr3.length - 1]);
@@ -1881,7 +2512,7 @@ Log.d("qw", arr.get(size - 2));
 
                 }
                 if (!(arr4[0].equals("The") || arr4[0].equals("A") || arr4[0].equals("An") || arr4[0].contains(".")||arr4[0].contains("In"))) {
-                    arr4[0] = arr4[0].replaceAll("[^a-zA-Z0-9_.'-]", "");
+                 //   arr4[0] = arr4[0].replaceAll("[^a-zA-Z0-9_.'-]", "");
                     find4 = arr4[0];
 
 
@@ -1891,7 +2522,7 @@ Log.d("qw", arr.get(size - 2));
                     optiond = arr4[0];
 
                 } else {
-                    arr4[arr4.length - 1] = arr4[arr4.length - 1].replaceAll("[^a-zA-Z0-9_.'-]", "");
+                   // arr4[arr4.length - 1] = arr4[arr4.length - 1].replaceAll("[^a-zA-Z0-9_.'-]", "");
                     find4=arr4[arr4.length - 1];
                     //webView2.findAllAsync(find3);
                     Log.d("dfdfdf", arr4[arr4.length - 1]);
@@ -2040,7 +2671,8 @@ public void showNothing()
     public void showQuest(String ques)
 
     {
-        textQuest.setText(ques);
+        textQuest.setText("Using( "+engine+" )");
+        textQuestClone.setText("DEFAULT :- Using ( Google )");
     }
 
 
@@ -2048,30 +2680,126 @@ public void showNothing()
     {
         webView.findAllAsync(find1);
     }
+    public void findInWeb1Clone()
+    {
+       webViewClone.findAllAsync(find1);
+    }
     public void findInWeb2()
     {
         webView1.findAllAsync(find2);
+    }
+    public void findInWeb2Clone()
+    {
+        webView1Clone.findAllAsync(find2);
     }
     public void findInWeb3()
     {
         webView2.findAllAsync(find3);
     }
+    public void findInWeb3Clone()
+    {
+        webView2Clone.findAllAsync(find3);
+    }
     public void findInWeb4()
     {
         webView3.findAllAsync(find4);
     }
+    public void findInWeb4Clone()
+    {
+        webView3Clone.findAllAsync(find4);
+    }
 
     public String modifyString(String str)
     {
-       str= str.replace(" not ","");
-       str= str.replace(" never","");
-       str= str.replace(" didnt","");
+
+        str=str.toLowerCase();
+        String[][] replacements = {  {"who",""},
+                {"what"," "},
+                {"where"," "},
+
+                {"when"," "},
+
+
+                {" that "," "},
+                {" have "," "},
+                {" for "," "},
+                {" the " ," "},
+                {"why "," "},
+                {" the "," "},
+                {" on "," "},
+                {" with "," "},
+                {" as "," "},
+                {"this"," "},
+                {" by "," "},
+                {"from"," "},
+                {" they " ," "},
+                {" a "," "},
+                {" an "," "},
+                {" and "," "},
+                {"following"," "},
+                {"among"," "},
+                {" my "," "},
+                {" are "," "},
+                { " in "," "},
+                {" to "," "},
+                {"these"," "},
+                {" is "," "},
+                {" does "," "},
+                {"which"," "},
+                {" his "," " },
+                {" her "," "},
+                {" also "," "},
+                {" never "," "},
+                {" have "," "},
+                {" it "," "},
+                {" not "," "},
+                {" we "," "},
+                {" means "," "},
+                {" you "," "},
+                {" comes "," "},
+                {" came " ," "},
+                {" come"," "},
+                {" about "," "},
+
+                {" from ",""},
+                {" go "," "},
+                {"?"," "},
+                {","," "},
+                {"!"," "},
+                {"'"," "},
+                {" has "," "},
+
+                {"\""," "},
+                {"not"," "},
+                {"isn\"t"," "},
+                {"except"," "},
+                {"don\"t"," "},
+                {"doesn\"t"," "},
+
+                {"wasn\"t"," "},
+                {"wouldn\"t"," "},
+                {"can\"t"," "}
+
+        };
+
+//loop over the array and replace
+
+        for(String[] replacement: replacements) {
+            str = str.replace(replacement[0], replacement[1]);
+        }
+      /*  str= str.replace(" not ","");
+        str= str.replace(" never","");
+        str= str.replace(" didnt","");
         str=str.replace("Which of these","");
         str=str.replace("Who among these","");
+        str=str.replace("Where is the ","");
+        str=str.replace("Where ","");
         str=str.replace("Which of","");
-      str=  str.replace("following","");
-        str=  str.replace("NOT","");
-        str=  str.replace("NEVER","");
+        str=str.replace("Which ","");
+        str=  str.replace("following","");
+        str=  str.replace(" NOT ","");
+        str=  str.replace(" NEVER ","");
+        */
 
 
     return str;

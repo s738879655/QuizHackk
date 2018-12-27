@@ -202,6 +202,13 @@
         android:textAlignment="center"
         android:textSize="25dp" />
 
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/newimage"/>
+
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="150dp"

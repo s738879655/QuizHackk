@@ -41,13 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchasesUpdatedListener;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.chartboost.sdk.Chartboost;
 import com.google.ads.mediation.chartboost.ChartboostAdapter;
 import com.google.android.ads.mediationtestsuite.MediationTestSuite;
@@ -74,11 +67,11 @@ import java.util.Timer;
 
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, RewardedVideoAdListener,PurchasesUpdatedListener{
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, RewardedVideoAdListener{
     public static MediaProjection sMediaProjection;
 
    //For in app billing
-    private BillingClient mBillingClient;
+
 private String mPremiumUpgradePrice;
 public static  boolean optionFour=true;
 
@@ -245,7 +238,7 @@ public static  boolean optionFour=true;
 // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
-       // spinner1.setAdapter(adapter1);
+       // spinner1.setAdapter(adapter1);2
        // spinner1.setOnItemSelectedListener(this);
 */
         final IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
@@ -811,8 +804,5 @@ public static  boolean optionFour=true;
 
 
 
-    @Override
-    public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
 
-    }
 }
