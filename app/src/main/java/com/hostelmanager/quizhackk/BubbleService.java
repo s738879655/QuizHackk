@@ -67,6 +67,7 @@ import static com.hostelmanager.quizhackk.MainActivity.isChecked;
 import static com.hostelmanager.quizhackk.MainActivity.isChecked1;
 
 import static com.hostelmanager.quizhackk.MainActivity.checkbox3;
+import static com.hostelmanager.quizhackk.MainActivity.checkbox4;
 
 
 public class BubbleService extends Service {
@@ -125,6 +126,7 @@ public class BubbleService extends Service {
     List<String> arr;
     String ques="";
     boolean optionFour=false;
+    boolean optionDual=false;
 
     int size,first=230,second=220;
     boolean forA, forB, forC,forD;
@@ -156,7 +158,7 @@ public class BubbleService extends Service {
 
 
     int DURATION=1300;
-    Thread t,t1;
+    Thread t,t1,t2,t3,tClone,t1Clone,t2Clone,t3Clone;
     TextView msg;
     Context context;
     private  boolean running=false;
@@ -274,6 +276,10 @@ public class BubbleService extends Service {
              optionFour=true;
          else
              optionFour=false;
+         if(checkbox4.isChecked())
+             optionDual=true;
+         else
+             optionDual=false;
 
 
         //   initialiseWebview();
@@ -297,9 +303,11 @@ public class BubbleService extends Service {
         WindowManager.LayoutParams mClipLayoutParams = buildLayoutParamsForClip();
         ((ClipView) mClipLayoutBinding.getRoot()).updateRegion(clipBox[0], clipBox[1], clipBox[2], clipBox[3]);
 
-        if(!(layout.getVisibility()== View.GONE&&layout1.getVisibility()== View.GONE))
+        if(!(layout.getVisibility()== View.GONE&&layout1.getVisibility()== View.GONE)) {
             layout.setVisibility(View.GONE);
+
             layout1.setVisibility(View.GONE);
+        }
         // getWindowManager().removeView(layout);
         if(!isClipMode)
             getWindowManager().addView(mClipLayoutBinding.getRoot(), mClipLayoutParams);
@@ -568,7 +576,9 @@ public class BubbleService extends Service {
                                 if (image != null)
                                 {
                                     layout.setVisibility(View.VISIBLE);
+                                  if(optionDual)
                                     layout1.setVisibility(View.VISIBLE);
+
                                     running=true;
                                     emitter.onSuccess(image);
                                 }
@@ -900,9 +910,6 @@ public class BubbleService extends Service {
                     Log.d("deqwer", urlComing);
 
 
-
-
-
                     Handler mainHandler = new Handler(Looper.getMainLooper());
 
                     Runnable myRunnable = new Runnable() {
@@ -915,7 +922,7 @@ public class BubbleService extends Service {
                             webView2.loadUrl(finalNewUrl);
 
 
-                            if(optionFour) {
+                            if (optionFour) {
                                 webView3.loadUrl(finalNewUrl);
 
                             }
@@ -924,21 +931,19 @@ public class BubbleService extends Service {
                             progressBar.setProgress(1);
 
 
-
                             webView.setWebChromeClient(new WebChromeClient() {
-                                        public void onProgressChanged(WebView view, int progress) {
-                                            progressBar.setProgress(progress);
-                                            if (progress == 100) {
-                                                progressBar.setVisibility(View.GONE);
+                                public void onProgressChanged(WebView view, int progress) {
+                                    progressBar.setProgress(progress);
+                                    if (progress == 100) {
+                                        progressBar.setVisibility(View.GONE);
 
-                                            } else {
+                                    } else {
 
-                                                progressBar.setVisibility(View.VISIBLE);
+                                        progressBar.setVisibility(View.VISIBLE);
 
-                                            }
+                                    }
                                 }
                             });
-
 
 
                             Log.d("qwerr", "Enetrere in webview");
@@ -952,8 +957,8 @@ public class BubbleService extends Service {
                                     forA = true;
 
                                     webView.setVisibility(View.VISIBLE);
-                                  //  running = true;
-                                        findInWeb1();
+                                    //  running = true;
+                                    findInWeb1();
                                     super.onPageFinished(view, url);
                                 }
 
@@ -965,8 +970,8 @@ public class BubbleService extends Service {
 
                                 @Override
                                 public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                                    if(isChecked1)
-                                    showWeb1();
+                                    if (isChecked1)
+                                        showWeb1();
                                     else
                                         showWebType1();
 
@@ -974,7 +979,30 @@ public class BubbleService extends Service {
                                 }
                             });
 
+                        } // This is your code
+                    };
+                    mainHandler.post(myRunnable);
 
+
+
+                }
+            });
+
+            t.start();
+
+            t1 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // Insert some method call here.
+
+                    Log.d("deqwer", urlComing);
+
+
+                    Handler mainHandler1 = new Handler(Looper.getMainLooper());
+
+                    Runnable myRunnable1 = new Runnable() {
+                        @Override
+                        public void run() {
 
 
                             //    webView1.getSettings().setJavaScriptEnabled(true);
@@ -986,7 +1014,7 @@ public class BubbleService extends Service {
                                     forB = true;
 
                                     webView1.setVisibility(View.VISIBLE);
-                                //    running = true;
+                                    //    running = true;
 
                                     findInWeb2();
                                     super.onPageFinished(view, url);
@@ -1000,14 +1028,13 @@ public class BubbleService extends Service {
 
                                 @Override
                                 public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                                    if(isChecked1)
-                                    showWeb2();
+                                    if (isChecked1)
+                                        showWeb2();
                                     else
                                         showWebType2();
                                     super.onPageStarted(view, url, favicon);
                                 }
                             });
-
 
 
                             webView.setFindListener(new WebView.FindListener() {
@@ -1054,7 +1081,32 @@ public class BubbleService extends Service {
 
                                 }
                             });
-                            webView2.setFindListener(new WebView.FindListener() {
+
+                        } // This is your code
+                    };
+                    mainHandler1.post(myRunnable1);
+
+
+
+                }
+            });
+            t1.start();
+
+            t2 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // Insert some method call here.
+
+                    Log.d("deqwer", urlComing);
+
+
+                    Handler mainHandler2 = new Handler(Looper.getMainLooper());
+
+                    Runnable myRunnable2 = new Runnable() {
+                        @Override
+                        public void run() {
+
+            webView2.setFindListener(new WebView.FindListener() {
                                 @Override
                                 public void onFindResultReceived(int i, int i1, boolean b) {
                                     if (running == true) {
@@ -1084,7 +1136,7 @@ public class BubbleService extends Service {
                                 public void onPageFinished(WebView view, String url) {
                                     Log.i("onPageFinished", url);
                                     forC = true;
-                                //    running = true;
+                                    //    running = true;
                                     findInWeb3();
                                     webView2.setVisibility(View.VISIBLE);
                                     super.onPageFinished(view, url);
@@ -1098,16 +1150,43 @@ public class BubbleService extends Service {
 
                                 @Override
                                 public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                                    if(isChecked1)
-                                    showWeb3();
+                                    if (isChecked1)
+                                        showWeb3();
                                     else
                                         showWebType3();
                                     super.onPageStarted(view, url, favicon);
                                 }
                             });
 
-                            if(optionFour)
-                            {
+
+                        } // This is your code
+                    };
+                    mainHandler2.post(myRunnable2);
+
+
+
+                }
+            });
+            t2.start();
+
+            t3 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // Insert some method call here.
+
+                    Log.d("deqwer", urlComing);
+
+
+                    Handler mainHandler3 = new Handler(Looper.getMainLooper());
+
+                    Runnable myRunnable3 = new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if (optionFour) {
+
+
+
                                 button3.setVisibility(View.VISIBLE);
                                 button3Clone.setVisibility(View.VISIBLE);
                                 webView3.setFindListener(new WebView.FindListener() {
@@ -1155,7 +1234,7 @@ public class BubbleService extends Service {
 
                                     @Override
                                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                                        if(isChecked1)
+                                        if (isChecked1)
                                             showWeb4();
                                         else
                                             showWebType4();
@@ -1169,225 +1248,205 @@ public class BubbleService extends Service {
 
                         } // This is your code
                     };
-                    mainHandler.post(myRunnable);
+                    mainHandler3.post(myRunnable3);
 
 
 
                 }
             });
-            t1=new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Handler mainHandler1 = new Handler(Looper.getMainLooper());
-
-                    Runnable myRunnable1 = new Runnable() {
-                        @Override
-                        public void run() {
-
-                            showQuest(ques);
+            t3.start();
 
 
-                            webViewClone.loadUrl("https://www.google.co.in/search?q="+newq);
-                            webView1Clone.loadUrl("https://www.google.co.in/search?q="+newq);
-                            webView2Clone.loadUrl("https://www.google.co.in/search?q="+newq);
 
-                            if(optionFour) {
 
-                                webView3Clone.loadUrl("https://www.google.co.in/search?q="+newq);
-                            }
+            if (optionDual) {
+                t1Clone = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler mainHandler1 = new Handler(Looper.getMainLooper());
 
-                            progressBarClone.setMax(100);
+                        Runnable myRunnable1 = new Runnable() {
+                            @Override
+                            public void run() {
 
-                            progressBarClone.setProgress(1);
+                                showQuest(ques);
 
-                            webViewClone.setWebChromeClient(new WebChromeClient() {
-                                public void onProgressChanged(WebView view, int progress) {
-                                    progressBarClone.setProgress(progress);
-                                    if (progress == 100) {
-                                        progressBarClone.setVisibility(View.GONE);
 
-                                    } else {
+                                webViewClone.loadUrl("https://www.google.co.in/search?q=" + newq);
+                                webView1Clone.loadUrl("https://www.google.co.in/search?q=" + newq);
+                                webView2Clone.loadUrl("https://www.google.co.in/search?q=" + newq);
 
-                                        progressBarClone.setVisibility(View.VISIBLE);
+                                if (optionFour) {
 
+                                    webView3Clone.loadUrl("https://www.google.co.in/search?q=" + newq);
+                                }
+
+                                progressBarClone.setMax(100);
+
+                                progressBarClone.setProgress(1);
+
+                                webViewClone.setWebChromeClient(new WebChromeClient() {
+                                    public void onProgressChanged(WebView view, int progress) {
+                                        progressBarClone.setProgress(progress);
+                                        if (progress == 100) {
+                                            progressBarClone.setVisibility(View.GONE);
+
+                                        } else {
+
+                                            progressBarClone.setVisibility(View.VISIBLE);
+
+                                        }
                                     }
-                                }
-                            });
+                                });
 
 
-                            Log.d("qwerr", "Enetrere in webview");
-                            //   webView.getSettings().setJavaScriptEnabled(true);
+                                Log.d("qwerr", "Enetrere in webview");
+                                //   webView.getSettings().setJavaScriptEnabled(true);
 
 
+                                webViewClone.setWebViewClient(new WebViewClient() {
+                                    @Override
+                                    public void onPageFinished(WebView view, String url) {
 
-                            webViewClone.setWebViewClient(new WebViewClient() {
-                                @Override
-                                public void onPageFinished(WebView view, String url) {
+                                        Log.d("jhdhdc", "Entered int the On page Finished");
+                                        forAClone = true;
 
-                                    Log.d("jhdhdc", "Entered int the On page Finished");
-                                    forAClone = true;
+                                        //  webViewClone.setVisibility(View.VISIBLE);
+                                        //  running = true;
+                                        findInWeb1Clone();
+                                        super.onPageFinished(view, url);
+                                    }
 
-                                  //  webViewClone.setVisibility(View.VISIBLE);
-                                    //  running = true;
-                                    findInWeb1Clone();
-                                    super.onPageFinished(view, url);
-                                }
+                                    @Override
+                                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                        //  Log.i("shouldOverrideUrlLoading", url.toString());
+                                        return super.shouldOverrideUrlLoading(view, url);
+                                    }
 
-                                @Override
-                                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                                    //  Log.i("shouldOverrideUrlLoading", url.toString());
-                                    return super.shouldOverrideUrlLoading(view, url);
-                                }
+                                    @Override
+                                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
 
-                                @Override
-                                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                                        super.onPageStarted(view, url, favicon);
+                                    }
+                                });
 
-                                    super.onPageStarted(view, url, favicon);
-                                }
-                            });
+                            } // This is your code
+                        };
+                        mainHandler1.post(myRunnable1);
+                    }
+                });
+                t1Clone.start();
+
+                t2Clone = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler mainHandler1 = new Handler(Looper.getMainLooper());
+
+                        Runnable myRunnable1 = new Runnable() {
+                            @Override
+                            public void run() {
+
+                                //    webView1.getSettings().setJavaScriptEnabled(true);
+
+                                webView1Clone.setWebViewClient(new WebViewClient() {
+
+                                    @Override
+                                    public void onPageFinished(WebView view, String url) {
+                                        Log.i("onPageFinished", url);
+                                        forBClone = true;
+
+                                        //      webView1.setVisibility(View.VISIBLE);
+                                        //    running = true;
+
+                                        findInWeb2Clone();
+                                        super.onPageFinished(view, url);
+                                    }
+
+                                    @Override
+                                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                        //  Log.i("shouldOverrideUrlLoading", url.toString());
+                                        return super.shouldOverrideUrlLoading(view, url);
+                                    }
+
+                                    @Override
+                                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+                                        super.onPageStarted(view, url, favicon);
+                                    }
+                                });
 
 
-                            //    webView1.getSettings().setJavaScriptEnabled(true);
+                                webViewClone.setFindListener(new WebView.FindListener() {
+                                    @Override
+                                    public void onFindResultReceived(int i, int i1, boolean b) {
+                                        Log.d("msg0", i1 + "");
+                                        Log.d("qaws", b + "");
 
-                            webView1Clone.setWebViewClient(new WebViewClient() {
+                                        //  forA = b;
+                                        if (running == true) {
 
-                                @Override
-                                public void onPageFinished(WebView view, String url) {
-                                    Log.i("onPageFinished", url);
-                                    forBClone = true;
-
-                                    //      webView1.setVisibility(View.VISIBLE);
-                                    //    running = true;
-
-                                    findInWeb2Clone();
-                                    super.onPageFinished(view, url);
-                                }
-
-                                @Override
-                                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                                    //  Log.i("shouldOverrideUrlLoading", url.toString());
-                                    return super.shouldOverrideUrlLoading(view, url);
-                                }
-
-                                @Override
-                                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-
-                                    super.onPageStarted(view, url, favicon);
-                                }
-                            });
+                                            if (i1 > optionAClone) {
+                                                //  webView.findNext(true);
+                                                // webView1.findNext(true);
+                                                //   webView2.findNext(true);
+                                                optionAClone = i1;
+                                                //   Toast.makeText(context, i1+"", Toast.LENGTH_SHORT).show();
+                                            }
 
 
+                                            Log.d("qwe", "InCounting");
+                                            showAnswerClone();
+                                            Log.d("msg", "cdfds");
 
-                            webViewClone.setFindListener(new WebView.FindListener() {
-                                @Override
-                                public void onFindResultReceived(int i, int i1, boolean b) {
-                                    Log.d("msg0", i1 + "");
-                                    Log.d("qaws", b + "");
+                                        }
+                                    }
+                                });
 
-                                    //  forA = b;
-                                    if (running == true) {
 
-                                        if (i1 > optionAClone) {
-                                            //  webView.findNext(true);
-                                            // webView1.findNext(true);
-                                            //   webView2.findNext(true);
-                                            optionAClone = i1;
-                                            //   Toast.makeText(context, i1+"", Toast.LENGTH_SHORT).show();
+                                webView1Clone.setFindListener(new WebView.FindListener() {
+                                    @Override
+                                    public void onFindResultReceived(int i, int i1, boolean b) {
+                                        Log.d("msg1", i1 + "");
+                                        if (running == true) {
+                                            if (i1 > optionBClone) {
+                                                // webView.findNext(true);
+                                                //  webView1.findNext(true);
+                                                //  webView2.findNext(true);
+                                                optionBClone = i1;
+                                            } // forB = b;
+                                            showAnswerClone();
+                                            Log.d("msg", "c");
                                         }
 
-
-                                        Log.d("qwe", "InCounting");
-                                        showAnswerClone();
-                                        Log.d("msg", "cdfds");
-
                                     }
-                                }
-                            });
+                                });
 
+                            } // This is your code
+                        };
+                        mainHandler1.post(myRunnable1);
+                    }
+                });
+                t2Clone.start();
 
-                            webView1Clone.setFindListener(new WebView.FindListener() {
-                                @Override
-                                public void onFindResultReceived(int i, int i1, boolean b) {
-                                    Log.d("msg1", i1 + "");
-                                    if (running == true) {
-                                        if (i1 > optionBClone) {
-                                            // webView.findNext(true);
-                                            //  webView1.findNext(true);
-                                            //  webView2.findNext(true);
-                                            optionBClone = i1;
-                                        } // forB = b;
-                                        showAnswerClone();
-                                        Log.d("msg", "c");
-                                    }
+                t3Clone = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler mainHandler1 = new Handler(Looper.getMainLooper());
 
-                                }
-                            });
+                        Runnable myRunnable1 = new Runnable() {
+                            @Override
+                            public void run() {
 
-                            webView2Clone.setFindListener(new WebView.FindListener() {
-                                @Override
-                                public void onFindResultReceived(int i, int i1, boolean b) {
-                                    if (running == true) {
-                                        Log.d("msg2", i1 + "");
-                                        if (i1 > optionCClone) {
-                                            //webView.findNext(true);
-                                            // webView1.findNext(true);
-                                            // webView2.findNext(true);
-                                            optionCClone = i1;
-                                        }
-
-                                        Log.d("msg", "cjj");
-
-                                        showAnswerClone();
-                                    }
-                                }
-                            });
-                            //forC = b;
-
-
-                            //       webView2.getSettings().setJavaScriptEnabled(true);
-
-                            webView2Clone.setWebViewClient(new WebViewClient() {
-
-
-                                @Override
-                                public void onPageFinished(WebView view, String url) {
-                                    Log.i("onPageFinished", url);
-                                    forCClone = true;
-                                    //    running = true;
-                                    findInWeb3Clone();
-                                    //   webView2.setVisibility(View.VISIBLE);
-                                    super.onPageFinished(view, url);
-                                }
-
-                                @Override
-                                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                                    //  Log.i("shouldOverrideUrlLoading", url.toString());
-                                    return super.shouldOverrideUrlLoading(view, url);
-                                }
-
-                                @Override
-                                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-
-                                    super.onPageStarted(view, url, favicon);
-                                }
-                            });
-
-                            if(optionFour)
-                            {
-                                button3.setVisibility(View.VISIBLE);
-                                button3Clone.setVisibility(View.VISIBLE);
-
-                                webView3Clone.setFindListener(new WebView.FindListener() {
+                                webView2Clone.setFindListener(new WebView.FindListener() {
                                     @Override
                                     public void onFindResultReceived(int i, int i1, boolean b) {
                                         if (running == true) {
                                             Log.d("msg2", i1 + "");
-                                            if (i1 > optionDClone) {
-                                                //  webView.findNext(true);
+                                            if (i1 > optionCClone) {
+                                                //webView.findNext(true);
                                                 // webView1.findNext(true);
                                                 // webView2.findNext(true);
-                                                // webView3.findNext(true);
-                                                optionDClone = i1;
+                                                optionCClone = i1;
                                             }
 
                                             Log.d("msg", "cjj");
@@ -1401,19 +1460,90 @@ public class BubbleService extends Service {
 
                                 //       webView2.getSettings().setJavaScriptEnabled(true);
 
-                            }
+                                webView2Clone.setWebViewClient(new WebViewClient() {
 
 
-                        } // This is your code
-                    };
-                    mainHandler1.post(myRunnable1);
-                }
-            });
+                                    @Override
+                                    public void onPageFinished(WebView view, String url) {
+                                        Log.i("onPageFinished", url);
+                                        forCClone = true;
+                                        //    running = true;
+                                        findInWeb3Clone();
+                                        //   webView2.setVisibility(View.VISIBLE);
+                                        super.onPageFinished(view, url);
+                                    }
+
+                                    @Override
+                                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                        //  Log.i("shouldOverrideUrlLoading", url.toString());
+                                        return super.shouldOverrideUrlLoading(view, url);
+                                    }
+
+                                    @Override
+                                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+                                        super.onPageStarted(view, url, favicon);
+                                    }
+                                });
+                            } // This is your code
+                        };
+                        mainHandler1.post(myRunnable1);
+                    }
+                });
+                tClone.start();
+
+                tClone = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Handler mainHandler1 = new Handler(Looper.getMainLooper());
+
+                        Runnable myRunnable1 = new Runnable() {
+                            @Override
+                            public void run() {
+                                if (optionFour) {
+                                    button3.setVisibility(View.VISIBLE);
+                                    button3Clone.setVisibility(View.VISIBLE);
+
+                                    webView3Clone.setFindListener(new WebView.FindListener() {
+                                        @Override
+                                        public void onFindResultReceived(int i, int i1, boolean b) {
+                                            if (running == true) {
+                                                Log.d("msg2", i1 + "");
+                                                if (i1 > optionDClone) {
+                                                    //  webView.findNext(true);
+                                                    // webView1.findNext(true);
+                                                    // webView2.findNext(true);
+                                                    // webView3.findNext(true);
+                                                    optionDClone = i1;
+                                                }
+
+                                                Log.d("msg", "cjj");
+
+                                                showAnswerClone();
+                                            }
+                                        }
+                                    });
+                                    //forC = b;
+
+
+                                    //       webView2.getSettings().setJavaScriptEnabled(true);
+
+                                }
+
+
+                            } // This is your code
+                        };
+                        mainHandler1.post(myRunnable1);
+                    }
+                });
+
+                tClone.start();
+
+            }
+
+
+
         }
-
-        t.start();
-        t1.start();
-
 
     }
 
@@ -1837,11 +1967,16 @@ else
             optionFour=true;
         else
             optionFour=false;
+        if(checkbox4.isChecked())
+            optionDual=true;
+        else
+            optionDual=false;
 
         green = Color.parseColor("#009e17");
         bg = Color.parseColor("#009e17");
         pink = Color.parseColor("#ffffff");
         layout = LayoutInflater.from(this).inflate(R.layout.answer_layout, null);
+
         layout1 = LayoutInflater.from(this).inflate(R.layout.answer_layout, null);
         webView = (WebView) layout.findViewById(R.id.webView);
         webView1 = (WebView) layout.findViewById(R.id.webView1);
@@ -2005,25 +2140,31 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
     LAYOUT_FLAG,
     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
     PixelFormat.TRANSLUCENT);
-WindowManager.LayoutParams params1 = new WindowManager.LayoutParams(
-    WindowManager.LayoutParams.WRAP_CONTENT,
-    WindowManager.LayoutParams.WRAP_CONTENT,
-    LAYOUT_FLAG,
-    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-    PixelFormat.TRANSLUCENT);
 
-  params.gravity = Gravity.TOP | Gravity.RIGHT;        //Initially view will be added to top-left corner
+            WindowManager.LayoutParams params1 = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    LAYOUT_FLAG,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+
+
+            params1.gravity = Gravity.BOTTOM | Gravity.LEFT;        //Initially view will be added to top-left corner
+            params1.x = 0;
+            params1.y = 0;
+
+            getWindowManager().addView(layout1, params1);
+
+
+
+        params.gravity = Gravity.TOP | Gravity.RIGHT;        //Initially view will be added to top-left corner
         params.x = 10;
         params.y = 30;
 
-    getWindowManager().addView(layout, params);
-        params1.gravity = Gravity.BOTTOM| Gravity.LEFT;        //Initially view will be added to top-left corner
-        params1.x = 0;
-        params1.y = 0;
-    getWindowManager().addView(layout1, params1);
+        getWindowManager().addView(layout, params);
 
 
-
+      layout1.setVisibility(View.GONE);
 
         cross.setOnClickListener(new View.OnClickListener() {
             @Override

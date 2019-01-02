@@ -5,10 +5,9 @@
     <string name="oneBefore">• For 4 Option Select CHECKBOX which is at the TOP RIGHT.</string>
     <string name="one">• Select Your Search Engine then Click on START.</string>
     <string name="two">• Click on round icon . </string>
-    <string name="three">• Select complete region containing questions with all its 3 options .</string>
-    <string name="four">• Your most probable answer is with max ratings .</string>
-    <string name="five">• In Negative type Questions marks answer which have "0"  ratings.</string>
-    <string name="seven">• QuizHack will increase your chances of winnings upto 80-90 %.</string>
+    <string name="three">• Select complete region containing questions with all its options .</string>
+    <string name="four">• QuizHack will increase your chance of winning upto 80-90 % .</string>
+
     <string name="Eight">•  NOTE:- Watch Complete ad  .</string>
     <string name="default_notification_channel_id">0</string>
 </resources>

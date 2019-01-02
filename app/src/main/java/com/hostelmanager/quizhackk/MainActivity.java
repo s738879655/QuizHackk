@@ -101,6 +101,7 @@ public static  boolean optionFour=true;
     Activity activity;
 
     public static CheckBox checkbox3;
+    public static CheckBox checkbox4;
     Switch switchBtn1;
 
     private static final int REQUEST_CODE_PERMISSION = 2;
@@ -170,6 +171,7 @@ public static  boolean optionFour=true;
         counting.setVisibility(View.VISIBLE);
 
         checkbox3=findViewById(R.id.checkBox3);
+        checkbox4=findViewById(R.id.checkBox4);
 
      //   AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(request);
@@ -181,8 +183,8 @@ public static  boolean optionFour=true;
 
        // MediationTestSuite.setAdRequest(request.build());
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("videoId");
+      //  FirebaseDatabase database = FirebaseDatabase.getInstance();
+    ///    DatabaseReference myRef = database.getReference("videoId");
 
         mInterstitialAd = new InterstitialAd(this);
 
@@ -569,7 +571,7 @@ public static  boolean optionFour=true;
     @Override
     public void onRewardedVideoAdClosed() {
 
-        Toast.makeText(this,"You Have to watch complete (ad) .",Toast.LENGTH_LONG).show();
+     //   Toast.makeText(this,"You Have to watch complete (ad) .",Toast.LENGTH_LONG).show();
         loadRewardedVideoAd();
         binding.test.setEnabled(false);
     }
